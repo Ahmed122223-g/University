@@ -1,51 +1,84 @@
-import java.util.ArrayList;
-
 public class University {
 
-    private ArrayList<Student> students;
-    private ArrayList<Doctor> doctors;
-    private ArrayList<Course> courses;
+    private Student[] students;
+    private int studentCount;
+    private Doctor[] doctors;
+    private int doctorCount;
+    private Course[] courses;
+    private int courseCount;
+
+    private static final int MAX_LIMIT = 100;
 
     public University() {
-        this.students = new ArrayList<>();
-        this.doctors = new ArrayList<>();
-        this.courses = new ArrayList<>();
+        this.students = new Student[MAX_LIMIT];
+        this.studentCount = 0;
+        this.doctors = new Doctor[MAX_LIMIT];
+        this.doctorCount = 0;
+        this.courses = new Course[MAX_LIMIT];
+        this.courseCount = 0;
     }
 
-    public ArrayList<Student> getStudents() {
+    public Student[] getStudents() {
         return students;
     }
 
-    public ArrayList<Doctor> getDoctors() {
+    public int getStudentCount() {
+        return studentCount;
+    }
+
+    public Doctor[] getDoctors() {
         return doctors;
     }
 
-    public ArrayList<Course> getCourses() {
+    public int getDoctorCount() {
+        return doctorCount;
+    }
+
+    public Course[] getCourses() {
         return courses;
     }
 
+    public int getCourseCount() {
+        return courseCount;
+    }
+
     public void addStudent(Student s) {
-        students.add(s);
-        System.out.println("Added student: " + s.getName());
+        if (studentCount < MAX_LIMIT) {
+            students[studentCount] = s;
+            studentCount++;
+            System.out.println("Added student: " + s.getName());
+        } else {
+            System.out.println("Cannot add more students.");
+        }
     }
 
     public void addDoctor(Doctor d) {
-        doctors.add(d);
-        System.out.println("Added doctor: Dr. " + d.getName());
+        if (doctorCount < MAX_LIMIT) {
+            doctors[doctorCount] = d;
+            doctorCount++;
+            System.out.println("Added doctor: Dr. " + d.getName());
+        } else {
+            System.out.println("Cannot add more doctors.");
+        }
     }
 
     public void addCourse(Course c) {
-        courses.add(c);
-        System.out.println("Added course: " + c.getCourseName());
+        if (courseCount < MAX_LIMIT) {
+            courses[courseCount] = c;
+            courseCount++;
+            System.out.println("Added course: " + c.getCourseName());
+        } else {
+            System.out.println("Cannot add more courses.");
+        }
     }
 
     public void displayAllStudents() {
         System.out.println("\n===== ALL STUDENTS =====");
-        if (students.isEmpty()) {
+        if (studentCount == 0) {
             System.out.println("No students enrolled yet.");
         } else {
-            for (Student s : students) {
-                s.displayInfo();
+            for (int i = 0; i < studentCount; i++) {
+                students[i].displayInfo();
                 System.out.println();
             }
         }
@@ -53,11 +86,11 @@ public class University {
 
     public void displayAllDoctors() {
         System.out.println("\n===== ALL DOCTORS =====");
-        if (doctors.isEmpty()) {
+        if (doctorCount == 0) {
             System.out.println("No doctors registered yet.");
         } else {
-            for (Doctor d : doctors) {
-                d.displayInfo();
+            for (int i = 0; i < doctorCount; i++) {
+                doctors[i].displayInfo();
                 System.out.println();
             }
         }
@@ -65,11 +98,11 @@ public class University {
 
     public void displayAllCourses() {
         System.out.println("\n===== ALL COURSES =====");
-        if (courses.isEmpty()) {
+        if (courseCount == 0) {
             System.out.println("No courses added yet.");
         } else {
-            for (Course c : courses) {
-                c.displayCourseInfo();
+            for (int i = 0; i < courseCount; i++) {
+                courses[i].displayCourseInfo();
                 System.out.println();
             }
         }
@@ -78,15 +111,15 @@ public class University {
     public void displayAllPeople() {
         System.out.println("\n===== POLYMORPHISM EXAMPLE =====");
 
-        ArrayList<Person> people = new ArrayList<>();
-        people.addAll(students);
-        people.addAll(doctors);
-
-        if (people.isEmpty()) {
+        if (studentCount == 0 && doctorCount == 0) {
             System.out.println("No people in the university yet.");
         } else {
-            for (Person p : people) {
-                p.displayInfo();
+            for (int i = 0; i < studentCount; i++) {
+                students[i].displayInfo();
+                System.out.println();
+            }
+            for (int i = 0; i < doctorCount; i++) {
+                doctors[i].displayInfo();
                 System.out.println();
             }
         }

@@ -16,7 +16,7 @@ public class Main {
             showMainMenu();
 
             System.out.print("Enter choice: ");
-            int choice = getIntInput();
+            int choice = Integer.parseInt(scanner.nextLine());
 
             if (choice == 1) {
                 registerDoctor();
@@ -98,7 +98,7 @@ public class Main {
         String major = scanner.nextLine();
 
         System.out.print("Enter year: ");
-        int year = getIntInput();
+        int year = Integer.parseInt(scanner.nextLine());
 
         Student student = new Student(name, id, email, major, year);
         uni.addStudent(student);
@@ -109,25 +109,25 @@ public class Main {
     public static void doctorMenu() {
         System.out.println("\n--- Select Doctor ---");
 
-        if (uni.getDoctors().size() == 0) {
+        if (uni.getDoctorCount() == 0) {
             System.out.println("No doctors registered! Register a doctor first.");
             return;
         }
 
-        for (int i = 0; i < uni.getDoctors().size(); i++) {
-            Doctor d = uni.getDoctors().get(i);
+        for (int i = 0; i < uni.getDoctorCount(); i++) {
+            Doctor d = uni.getDoctors()[i];
             System.out.println((i + 1) + ". Dr. " + d.getName());
         }
 
         System.out.print("Select doctor number: ");
-        int doctorIndex = getIntInput() - 1;
+        int doctorIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
-        if (doctorIndex < 0 || doctorIndex >= uni.getDoctors().size()) {
+        if (doctorIndex < 0 || doctorIndex >= uni.getDoctorCount()) {
             System.out.println("Wrong number!");
             return;
         }
 
-        Doctor currentDoctor = uni.getDoctors().get(doctorIndex);
+        Doctor currentDoctor = uni.getDoctors()[doctorIndex];
 
         currentDoctor.showMenu(scanner, uni);
     }
@@ -135,37 +135,26 @@ public class Main {
     public static void studentMenu() {
         System.out.println("\n--- Select Student ---");
 
-        if (uni.getStudents().size() == 0) {
+        if (uni.getStudentCount() == 0) {
             System.out.println("No students registered! Register a student first.");
             return;
         }
 
-        for (int i = 0; i < uni.getStudents().size(); i++) {
-            Student s = uni.getStudents().get(i);
+        for (int i = 0; i < uni.getStudentCount(); i++) {
+            Student s = uni.getStudents()[i];
             System.out.println((i + 1) + ". " + s.getName());
         }
 
         System.out.print("Select student number: ");
-        int studentIndex = getIntInput() - 1;
+        int studentIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
-        if (studentIndex < 0 || studentIndex >= uni.getStudents().size()) {
+        if (studentIndex < 0 || studentIndex >= uni.getStudentCount()) {
             System.out.println("Wrong number!");
             return;
         }
 
-        Student currentStudent = uni.getStudents().get(studentIndex);
+        Student currentStudent = uni.getStudents()[studentIndex];
 
         currentStudent.showMenu(scanner, uni);
-    }
-
-    public static int getIntInput() {
-        int number = 0;
-        try {
-            String input = scanner.nextLine();
-            number = Integer.parseInt(input);
-        } catch (Exception e) {
-            number = 0;
-        }
-        return number;
     }
 }

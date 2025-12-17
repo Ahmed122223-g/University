@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-
 public class Course {
 
     private String courseName;
@@ -8,16 +5,21 @@ public class Course {
     private int credits;
     private Doctor doctor;
 
-    private Map<Student, Double> grades;
+    private Student[] gradedStudents;
+    private double[] gradesList;
+    private int gradesCount;
 
     public static final double MAX_GRADE = 4.0;
+    private static final int MAX_STUDENTS = 100;
 
     public Course(String courseName, String courseCode, int credits) {
         this.courseName = courseName;
         this.courseCode = courseCode;
         this.credits = credits;
         this.doctor = null;
-        this.grades = new HashMap<>();
+        this.gradedStudents = new Student[MAX_STUDENTS];
+        this.gradesList = new double[MAX_STUDENTS];
+        this.gradesCount = 0;
     }
 
     public String getCourseName() {
@@ -36,8 +38,16 @@ public class Course {
         return doctor;
     }
 
-    public Map<Student, Double> getGrades() {
-        return grades;
+    public Student[] getGradedStudents() {
+        return gradedStudents;
+    }
+
+    public double[] getGradesList() {
+        return gradesList;
+    }
+
+    public int getGradesCount() {
+        return gradesCount;
     }
 
     public void displayCourseInfo() {
@@ -57,10 +67,28 @@ public class Course {
     }
 
     public void setGrade(Student s, double grade) {
-        grades.put(s, grade);
+        for (int i = 0; i < gradesCount; i++) {
+            if (gradedStudents[i] == s) {
+                gradesList[i] = grade;
+                return;
+            }
+        }
+
+        if (gradesCount < MAX_STUDENTS) {
+            gradedStudents[gradesCount] = s;
+            gradesList[gradesCount] = grade;
+            gradesCount++;
+        } else {
+            System.out.println("Course is full, cannot assign grade.");
+        }
     }
 
     public Double getGrade(Student s) {
-        return grades.get(s);
+        for (int i = 0; i < gradesCount; i++) {
+            if (gradedStudents[i] == s) {
+                return gradesList[i];
+            }
+        }
+        return null;
     }
 }

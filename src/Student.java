@@ -1,10 +1,9 @@
-import java.util.ArrayList;
-
 public class Student extends Person {
 
     private String major;
     private int year;
-    private ArrayList<Course> selectedCourses;
+    private Course[] selectedCourses;
+    private int selectedCoursesCount;
 
     public static final int MAX_COURSES = 7;
 
@@ -12,7 +11,8 @@ public class Student extends Person {
         super(name, id, email);
         this.major = major;
         this.year = year;
-        this.selectedCourses = new ArrayList<>();
+        this.selectedCourses = new Course[MAX_COURSES];
+        this.selectedCoursesCount = 0;
     }
 
     public String getMajor() {
@@ -31,8 +31,12 @@ public class Student extends Person {
         this.year = year;
     }
 
-    public ArrayList<Course> getSelectedCourses() {
+    public Course[] getSelectedCourses() {
         return selectedCourses;
+    }
+
+    public int getSelectedCoursesCount() {
+        return selectedCoursesCount;
     }
 
     @Override
@@ -48,20 +52,22 @@ public class Student extends Person {
     }
 
     public void selectCourse(Course c) {
-        if (selectedCourses.size() >= MAX_COURSES) {
+        if (selectedCoursesCount >= MAX_COURSES) {
             System.out.println("Cannot add more courses!");
             return;
         }
-        selectedCourses.add(c);
+        selectedCourses[selectedCoursesCount] = c;
+        selectedCoursesCount++;
         System.out.println(getName() + " enrolled in " + c.getCourseName());
     }
 
     public void selectCourse(Course c, boolean notify) {
-        if (selectedCourses.size() >= MAX_COURSES) {
+        if (selectedCoursesCount >= MAX_COURSES) {
             System.out.println("Cannot add more courses!");
             return;
         }
-        selectedCourses.add(c);
+        selectedCourses[selectedCoursesCount] = c;
+        selectedCoursesCount++;
 
         if (notify) {
             System.out.println("NOTIFICATION: " + getName() + " enrolled in " + c.getCourseName());
@@ -73,7 +79,8 @@ public class Student extends Person {
     public void viewCourses() {
         System.out.println("Selected Courses:");
 
-        for (Course c : selectedCourses) {
+        for (int i = 0; i < selectedCoursesCount; i++) {
+            Course c = selectedCourses[i];
             Double grade = c.getGrade(this);
             String doctorName = "Not Assigned";
 
@@ -102,7 +109,8 @@ public class Student extends Person {
         double totalGrade = 0;
         int totalCredits = 0;
 
-        for (Course c : selectedCourses) {
+        for (int i = 0; i < selectedCoursesCount; i++) {
+            Course c = selectedCourses[i];
             Double grade = c.getGrade(this);
             if (grade != null) {
                 totalGrade = totalGrade + (grade * c.getCredits());
@@ -127,12 +135,7 @@ public class Student extends Person {
             System.out.println("4. Back to main menu");
 
             System.out.print("Choose: ");
-            int choice = 0;
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (Exception e) {
-                choice = 0;
-            }
+            int choice = Integer.parseInt(scanner.nextLine());
 
             if (choice == 1) {
                 enrollInCourse(scanner, uni);
@@ -151,13 +154,13 @@ public class Student extends Person {
     private void enrollInCourse(java.util.Scanner scanner, University uni) {
         System.out.println("\n--- Available Courses ---");
 
-        if (uni.getCourses().isEmpty()) {
+        if (uni.getCourseCount() == 0) {
             System.out.println("No courses available! Doctor must add courses first.");
             return;
         }
 
-        for (int i = 0; i < uni.getCourses().size(); i++) {
-            Course c = uni.getCourses().get(i);
+        for (int i = 0; i < uni.getCourseCount(); i++) {
+            Course c = uni.getCourses()[i];
             String doctorName = "No Doctor";
             if (c.getDoctor() != null) {
                 doctorName = "Dr. " + c.getDoctor().getName();
@@ -167,25 +170,17 @@ public class Student extends Person {
         }
 
         System.out.print("Select course number: ");
-        int courseIndex = -1;
-        try {
-            courseIndex = Integer.parseInt(scanner.nextLine()) - 1;
-        } catch (Exception e) {
-        }
+        int courseIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
-        if (courseIndex < 0 || courseIndex >= uni.getCourses().size()) {
+        if (courseIndex < 0 || courseIndex >= uni.getCourseCount()) {
             System.out.println("Wrong number!");
             return;
         }
 
-        Course selectedCourse = uni.getCourses().get(courseIndex);
+        Course selectedCourse = uni.getCourses()[courseIndex];
 
         System.out.print("Want notification? (1 = yes / 0 = no): ");
-        int notify = 0;
-        try {
-            notify = Integer.parseInt(scanner.nextLine());
-        } catch (Exception e) {
-        }
+        int notify = Integer.parseInt(scanner.nextLine());
 
         if (notify == 1) {
             selectCourse(selectedCourse, true);

@@ -1,17 +1,17 @@
-import java.util.ArrayList;
-import java.util.Map;
-
 public class Doctor extends Person {
 
     private String department;
     private String title;
-    private ArrayList<Course> assignedCourses;
+    private Course[] assignedCourses;
+    private int assignedCoursesCount;
+    private static final int MAX_COURSES = 10;
 
     public Doctor(String name, String id, String email, String department, String title) {
         super(name, id, email);
         this.department = department;
         this.title = title;
-        this.assignedCourses = new ArrayList<>();
+        this.assignedCourses = new Course[MAX_COURSES];
+        this.assignedCoursesCount = 0;
     }
 
     public String getDepartment() {
@@ -30,8 +30,12 @@ public class Doctor extends Person {
         this.title = title;
     }
 
-    public ArrayList<Course> getAssignedCourses() {
+    public Course[] getAssignedCourses() {
         return assignedCourses;
+    }
+
+    public int getAssignedCoursesCount() {
+        return assignedCoursesCount;
     }
 
     @Override
@@ -47,24 +51,52 @@ public class Doctor extends Person {
     }
 
     public void assignCourse(Course c) {
-        assignedCourses.add(c);
-        c.assignDoctor(this);
-        System.out.println("Dr. " + getName() + " assigned to " + c.getCourseName());
+        if (assignedCoursesCount < MAX_COURSES) {
+            assignedCourses[assignedCoursesCount] = c;
+            assignedCoursesCount++;
+            c.assignDoctor(this);
+            System.out.println("Dr. " + getName() + " assigned to " + c.getCourseName());
+        } else {
+            System.out.println("Cannot assign more courses.");
+        }
     }
 
     public void assignCourse(Course c, int semester) {
-        assignedCourses.add(c);
-        c.assignDoctor(this);
-        System.out.println("Dr. " + getName() + " assigned to " + c.getCourseName() + " (Semester " + semester + ")");
+        if (assignedCoursesCount < MAX_COURSES) {
+            assignedCourses[assignedCoursesCount] = c;
+            assignedCoursesCount++;
+            c.assignDoctor(this);
+            System.out
+                    .println("Dr. " + getName() + " assigned to " + c.getCourseName() + " (Semester " + semester + ")");
+        } else {
+            System.out.println("Cannot assign more courses.");
+        }
     }
 
     public void addGrade(Student s, Course c, double grade) {
-        if (!assignedCourses.contains(c)) {
+        boolean teachesCourse = false;
+        for (int i = 0; i < assignedCoursesCount; i++) {
+            if (assignedCourses[i] == c) {
+                teachesCourse = true;
+                break;
+            }
+        }
+
+        if (!teachesCourse) {
             System.out.println("Dr. " + getName() + " does not teach " + c.getCourseName());
             return;
         }
 
-        if (!s.getSelectedCourses().contains(c)) {
+        boolean studentEnrolled = false;
+        Course[] studentCourses = s.getSelectedCourses();
+        for (int i = 0; i < s.getSelectedCoursesCount(); i++) {
+            if (studentCourses[i] == c) {
+                studentEnrolled = true;
+                break;
+            }
+        }
+
+        if (!studentEnrolled) {
             System.out.println(s.getName() + " is not enrolled in " + c.getCourseName());
             return;
         }
@@ -75,21 +107,22 @@ public class Doctor extends Person {
 
     public void viewCourses() {
         System.out.println("Courses Teaching:");
-        for (Course c : assignedCourses) {
-            System.out.println("- " + c.getCourseName());
+        for (int i = 0; i < assignedCoursesCount; i++) {
+            System.out.println("- " + assignedCourses[i].getCourseName());
         }
     }
 
     public void showGrades() {
         System.out.println("Grades Assigned:");
 
-        for (Course c : assignedCourses) {
-            Map<Student, Double> grades = c.getGrades();
+        for (int i = 0; i < assignedCoursesCount; i++) {
+            Course c = assignedCourses[i];
+            Student[] students = c.getGradedStudents();
+            double[] grades = c.getGradesList();
+            int count = c.getGradesCount();
 
-            for (Map.Entry<Student, Double> entry : grades.entrySet()) {
-                Student student = entry.getKey();
-                Double grade = entry.getValue();
-                System.out.println("- " + student.getName() + ": " + grade + " in " + c.getCourseName());
+            for (int j = 0; j < count; j++) {
+                System.out.println("- " + students[j].getName() + ": " + grades[j] + " in " + c.getCourseName());
             }
         }
     }
@@ -104,12 +137,7 @@ public class Doctor extends Person {
             System.out.println("4. Back to main menu");
 
             System.out.print("Choose: ");
-            int choice = 0;
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (Exception e) {
-                choice = 0;
-            }
+            int choice = Integer.parseInt(scanner.nextLine());
 
             if (choice == 1) {
                 addNewCourse(scanner, uni);
@@ -135,11 +163,7 @@ public class Doctor extends Person {
         String courseCode = scanner.nextLine();
 
         System.out.print("Enter credits: ");
-        int credits = 0;
-        try {
-            credits = Integer.parseInt(scanner.nextLine());
-        } catch (Exception e) {
-        }
+        int credits = Integer.parseInt(scanner.nextLine());
 
         Course course = new Course(courseName, courseCode, credits);
         uni.addCourse(course);
@@ -149,66 +173,69 @@ public class Doctor extends Person {
     }
 
     private void assignGrade(java.util.Scanner scanner, University uni) {
-        if (getAssignedCourses().size() == 0) {
+        if (assignedCoursesCount == 0) {
             System.out.println("No courses! Add a course first.");
             return;
         }
 
         System.out.println("\n--- Select Course ---");
-        for (int i = 0; i < getAssignedCourses().size(); i++) {
-            Course c = getAssignedCourses().get(i);
-            System.out.println((i + 1) + ". " + c.getCourseName());
+        for (int i = 0; i < assignedCoursesCount; i++) {
+            System.out.println((i + 1) + ". " + assignedCourses[i].getCourseName());
         }
 
         System.out.print("Select course number: ");
-        int courseIndex = -1;
-        try {
-            courseIndex = Integer.parseInt(scanner.nextLine()) - 1;
-        } catch (Exception e) {
-        }
+        int courseIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
-        if (courseIndex < 0 || courseIndex >= getAssignedCourses().size()) {
+        if (courseIndex < 0 || courseIndex >= assignedCoursesCount) {
             System.out.println("Wrong number!");
             return;
         }
 
-        Course selectedCourse = getAssignedCourses().get(courseIndex);
+        Course selectedCourse = assignedCourses[courseIndex];
 
         System.out.println("\n--- Students enrolled in " + selectedCourse.getCourseName() + " ---");
 
-        java.util.ArrayList<Student> enrolledStudents = new java.util.ArrayList<>();
-        for (Student s : uni.getStudents()) {
-            if (s.getSelectedCourses().contains(selectedCourse)) {
-                enrolledStudents.add(s);
-                System.out.println((enrolledStudents.size()) + ". " + s.getName());
+        Student[] enrolledStudents = new Student[100];
+        int enrolledCount = 0;
+
+        Student[] uniStudents = uni.getStudents();
+        int uniStudentCount = uni.getStudentCount();
+
+        for (int i = 0; i < uniStudentCount; i++) {
+            Student s = uniStudents[i];
+            boolean isEnrolled = false;
+            Course[] sCourses = s.getSelectedCourses();
+            for (int k = 0; k < s.getSelectedCoursesCount(); k++) {
+                if (sCourses[k] == selectedCourse) {
+                    isEnrolled = true;
+                    break;
+                }
+            }
+
+            if (isEnrolled) {
+                enrolledStudents[enrolledCount] = s;
+                System.out.println((enrolledCount + 1) + ". " + s.getName());
+                enrolledCount++;
             }
         }
 
-        if (enrolledStudents.isEmpty()) {
+        if (enrolledCount == 0) {
             System.out.println("No students enrolled in this course!");
             return;
         }
 
         System.out.print("Select student number: ");
-        int studentIndex = -1;
-        try {
-            studentIndex = Integer.parseInt(scanner.nextLine()) - 1;
-        } catch (Exception e) {
-        }
+        int studentIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
-        if (studentIndex < 0 || studentIndex >= enrolledStudents.size()) {
+        if (studentIndex < 0 || studentIndex >= enrolledCount) {
             System.out.println("Wrong number!");
             return;
         }
 
-        Student selectedStudent = enrolledStudents.get(studentIndex);
+        Student selectedStudent = enrolledStudents[studentIndex];
 
         System.out.print("Enter grade (0 to 4): ");
-        double grade = 0;
-        try {
-            grade = Double.parseDouble(scanner.nextLine());
-        } catch (Exception e) {
-        }
+        double grade = Double.parseDouble(scanner.nextLine());
 
         addGrade(selectedStudent, selectedCourse, grade);
     }
