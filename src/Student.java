@@ -61,21 +61,6 @@ public class Student extends Person {
         System.out.println(getName() + " enrolled in " + c.getCourseName());
     }
 
-    public void selectCourse(Course c, boolean notify) {
-        if (selectedCoursesCount >= MAX_COURSES) {
-            System.out.println("Cannot add more courses!");
-            return;
-        }
-        selectedCourses[selectedCoursesCount] = c;
-        selectedCoursesCount++;
-
-        if (notify) {
-            System.out.println("NOTIFICATION: " + getName() + " enrolled in " + c.getCourseName());
-        } else {
-            System.out.println(getName() + " enrolled in " + c.getCourseName());
-        }
-    }
-
     public void viewCourses() {
         System.out.println("Selected Courses:");
 
@@ -178,14 +163,6 @@ public class Student extends Person {
         }
 
         Course selectedCourse = uni.getCourses()[courseIndex];
-
-        System.out.print("Want notification? (1 = yes / 0 = no): ");
-        int notify = Integer.parseInt(scanner.nextLine());
-
-        if (notify == 1) {
-            selectCourse(selectedCourse, true);
-        } else {
-            selectCourse(selectedCourse);
-        }
+        selectCourse(selectedCourse);
     }
 }
