@@ -1,9 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
-
     static Scanner scanner = new Scanner(System.in);
-
     static University uni = new University();
 
     public static void main(String[] args) {
@@ -13,148 +11,101 @@ public class Main {
 
         boolean running = true;
         while (running) {
-            showMainMenu();
-
+            showMenu();
             System.out.print("Enter choice: ");
             int choice = Integer.parseInt(scanner.nextLine());
 
-            if (choice == 1) {
+            if (choice == 1)
                 registerDoctor();
-            } else if (choice == 2) {
+            else if (choice == 2)
                 registerStudent();
-            } else if (choice == 3) {
+            else if (choice == 3)
                 doctorMenu();
-            } else if (choice == 4) {
+            else if (choice == 4)
                 studentMenu();
-            } else if (choice == 5) {
+            else if (choice == 5)
                 uni.displayAllStudents();
-            } else if (choice == 6) {
+            else if (choice == 6)
                 uni.displayAllDoctors();
-            } else if (choice == 7) {
+            else if (choice == 7)
                 uni.displayAllCourses();
-            } else if (choice == 8) {
-                System.out.println("\nThank you for using the system!");
+            else if (choice == 8) {
+                System.out.println("\nGoodbye!");
                 running = false;
-            } else {
-                System.out.println("Wrong choice! Try again.");
-            }
-
+            } else
+                System.out.println("Wrong choice!");
             System.out.println();
         }
-
         scanner.close();
     }
 
-    public static void showMainMenu() {
+    static void showMenu() {
         System.out.println("\n----- Main Menu -----");
-        System.out.println("1. Register new Doctor");
-        System.out.println("2. Register new Student");
-        System.out.println("3. Login as Doctor (add course / assign grades)");
-        System.out.println("4. Login as Student (select courses / view GPA)");
-        System.out.println("5. Display all Students");
-        System.out.println("6. Display all Doctors");
-        System.out.println("7. Display all Courses");
+        System.out.println("1. Register Doctor");
+        System.out.println("2. Register Student");
+        System.out.println("3. Doctor Login");
+        System.out.println("4. Student Login");
+        System.out.println("5. Show Students");
+        System.out.println("6. Show Doctors");
+        System.out.println("7. Show Courses");
         System.out.println("8. Exit");
-        System.out.println("---------------------");
     }
 
-    public static void registerDoctor() {
-        System.out.println("\n--- Register New Doctor ---");
-
-        System.out.print("Enter doctor name: ");
+    static void registerDoctor() {
+        System.out.println("\n--- Register Doctor ---");
+        System.out.print("Name: ");
         String name = scanner.nextLine();
-
-        System.out.print("Enter doctor ID: ");
+        System.out.print("ID: ");
         String id = scanner.nextLine();
-
-        System.out.print("Enter doctor email: ");
+        System.out.print("Email: ");
         String email = scanner.nextLine();
-
-        System.out.print("Enter department: ");
-        String department = scanner.nextLine();
-
-        System.out.print("Enter title (Professor/Lecturer): ");
+        System.out.print("Department: ");
+        String dept = scanner.nextLine();
+        System.out.print("Title: ");
         String title = scanner.nextLine();
-
-        Doctor doctor = new Doctor(name, id, email, department, title);
-        uni.addDoctor(doctor);
-
-        System.out.println("Doctor registered successfully!");
+        uni.addDoctor(new Doctor(name, id, email, dept, title));
     }
 
-    public static void registerStudent() {
-        System.out.println("\n--- Register New Student ---");
-
-        System.out.print("Enter student name: ");
+    static void registerStudent() {
+        System.out.println("\n--- Register Student ---");
+        System.out.print("Name: ");
         String name = scanner.nextLine();
-
-        System.out.print("Enter student ID: ");
+        System.out.print("ID: ");
         String id = scanner.nextLine();
-
-        System.out.print("Enter student email: ");
+        System.out.print("Email: ");
         String email = scanner.nextLine();
-
-        System.out.print("Enter major: ");
+        System.out.print("Major: ");
         String major = scanner.nextLine();
-
-        System.out.print("Enter year: ");
+        System.out.print("Year: ");
         int year = Integer.parseInt(scanner.nextLine());
-
-        Student student = new Student(name, id, email, major, year);
-        uni.addStudent(student);
-
-        System.out.println("Student registered successfully!");
+        uni.addStudent(new Student(name, id, email, major, year));
     }
 
-    public static void doctorMenu() {
-        System.out.println("\n--- Select Doctor ---");
-
+    static void doctorMenu() {
         if (uni.getDoctorCount() == 0) {
-            System.out.println("No doctors registered! Register a doctor first.");
+            System.out.println("No doctors!");
             return;
         }
-
-        for (int i = 0; i < uni.getDoctorCount(); i++) {
-            Doctor d = uni.getDoctors()[i];
-            System.out.println((i + 1) + ". Dr. " + d.getName());
-        }
-
-        System.out.print("Select doctor number: ");
-        int doctorIndex = Integer.parseInt(scanner.nextLine()) - 1;
-
-        if (doctorIndex < 0 || doctorIndex >= uni.getDoctorCount()) {
-            System.out.println("Wrong number!");
-            return;
-        }
-
-        Doctor currentDoctor = uni.getDoctors()[doctorIndex];
-
-        currentDoctor.showMenu(scanner, uni);
+        System.out.println("\n--- Select Doctor ---");
+        for (int i = 0; i < uni.getDoctorCount(); i++)
+            System.out.println((i + 1) + ". Dr. " + uni.getDoctors()[i].getName());
+        System.out.print("Select: ");
+        int idx = Integer.parseInt(scanner.nextLine()) - 1;
+        if (idx >= 0 && idx < uni.getDoctorCount())
+            uni.getDoctors()[idx].showMenu(scanner, uni);
     }
 
-    public static void studentMenu() {
-        System.out.println("\n--- Select Student ---");
-
+    static void studentMenu() {
         if (uni.getStudentCount() == 0) {
-            System.out.println("No students registered! Register a student first.");
+            System.out.println("No students!");
             return;
         }
-
-        for (int i = 0; i < uni.getStudentCount(); i++) {
-            Student s = uni.getStudents()[i];
-            System.out.println((i + 1) + ". " + s.getName());
-        }
-
-        System.out.print("Select student number: ");
-        int studentIndex = Integer.parseInt(scanner.nextLine()) - 1;
-
-        if (studentIndex < 0 || studentIndex >= uni.getStudentCount()) {
-            System.out.println("Wrong number!");
-            return;
-        }
-
-        Student currentStudent = uni.getStudents()[studentIndex];
-
-        currentStudent.showMenu(scanner, uni);
+        System.out.println("\n--- Select Student ---");
+        for (int i = 0; i < uni.getStudentCount(); i++)
+            System.out.println((i + 1) + ". " + uni.getStudents()[i].getName());
+        System.out.print("Select: ");
+        int idx = Integer.parseInt(scanner.nextLine()) - 1;
+        if (idx >= 0 && idx < uni.getStudentCount())
+            uni.getStudents()[idx].showMenu(scanner, uni);
     }
 }

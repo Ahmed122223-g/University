@@ -1,10 +1,8 @@
 public class Course {
-
     private String courseName;
     private String courseCode;
     private int credits;
     private Doctor doctor;
-
     private Student[] gradedStudents;
     private double[] gradesList;
     private int gradesCount;
@@ -50,20 +48,15 @@ public class Course {
         return gradesCount;
     }
 
+    public void assignDoctor(Doctor d) {
+        this.doctor = d;
+    }
+
     public void displayCourseInfo() {
         System.out.println("Course: " + courseName);
         System.out.println("Code: " + courseCode);
         System.out.println("Credits: " + credits);
-
-        if (doctor != null) {
-            System.out.println("Doctor: " + doctor.getName());
-        } else {
-            System.out.println("Doctor: Not Assigned");
-        }
-    }
-
-    public void assignDoctor(Doctor d) {
-        this.doctor = d;
+        System.out.println("Doctor: " + (doctor != null ? doctor.getName() : "Not Assigned"));
     }
 
     public void setGrade(Student s, double grade) {
@@ -73,21 +66,17 @@ public class Course {
                 return;
             }
         }
-
         if (gradesCount < MAX_STUDENTS) {
             gradedStudents[gradesCount] = s;
             gradesList[gradesCount] = grade;
             gradesCount++;
-        } else {
-            System.out.println("Course is full, cannot assign grade.");
         }
     }
 
     public Double getGrade(Student s) {
         for (int i = 0; i < gradesCount; i++) {
-            if (gradedStudents[i] == s) {
+            if (gradedStudents[i] == s)
                 return gradesList[i];
-            }
         }
         return null;
     }
