@@ -8,7 +8,7 @@ public class Course {
     private int gradesCount;
 
     public static final double MAX_GRADE = 4.0;
-    private static final int MAX_STUDENTS = 100;
+    private static final int MAX_STUDENTS = 50;
 
     public Course(String courseName, String courseCode, int credits) {
         this.courseName = courseName;
@@ -56,7 +56,11 @@ public class Course {
         System.out.println("Course: " + courseName);
         System.out.println("Code: " + courseCode);
         System.out.println("Credits: " + credits);
-        System.out.println("Doctor: " + (doctor != null ? doctor.getName() : "Not Assigned"));
+        if (doctor != null) {
+            System.out.println("Doctor: " + doctor.getName());
+        } else {
+            System.out.println("Doctor: Not Assigned");
+        }
     }
 
     public void setGrade(Student s, double grade) {

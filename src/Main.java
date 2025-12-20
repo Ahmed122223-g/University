@@ -5,9 +5,7 @@ public class Main {
     static University uni = new University();
 
     public static void main(String[] args) {
-        System.out.println("=================================");
-        System.out.println("   University Management System   ");
-        System.out.println("=================================\n");
+        System.out.println("            Beni Suef National University");
 
         boolean running = true;
         while (running) {
@@ -61,9 +59,7 @@ public class Main {
         String email = scanner.nextLine();
         System.out.print("Department: ");
         String dept = scanner.nextLine();
-        System.out.print("Title: ");
-        String title = scanner.nextLine();
-        uni.addDoctor(new Doctor(name, id, email, dept, title));
+        uni.addDoctor(new Doctor(name, id, email, dept));
     }
 
     static void registerStudent() {

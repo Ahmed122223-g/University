@@ -1,15 +1,13 @@
 public class Doctor extends Person {
 
     private String department;
-    private String title;
     private Course[] assignedCourses;
     private int assignedCoursesCount;
     private static final int MAX_COURSES = 10;
 
-    public Doctor(String name, String id, String email, String department, String title) {
+    public Doctor(String name, String id, String email, String department) {
         super(name, id, email);
         this.department = department;
-        this.title = title;
         this.assignedCourses = new Course[MAX_COURSES];
         this.assignedCoursesCount = 0;
     }
@@ -22,14 +20,6 @@ public class Doctor extends Person {
         this.department = department;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public Course[] getAssignedCourses() {
         return assignedCourses;
     }
@@ -38,15 +28,13 @@ public class Doctor extends Person {
         return assignedCoursesCount;
     }
 
-    @Override
     public void displayInfo() {
-        System.out.println("--- Doctor Info ---");
+        System.out.println("---------- Doctor Info ----------");
         System.out.println("Name: Dr. " + getName());
         System.out.println("ID: " + getId());
         System.out.println("Department: " + department);
-        System.out.println("Title: " + title);
-        viewCourses();
-        showGrades();
+        System.out.println("Courses: "); viewCourses();
+        System.out.println("Grades: "); showGrades();
     }
 
     public void assignCourse(Course c) {
@@ -110,7 +98,7 @@ public class Doctor extends Person {
     public void showMenu(java.util.Scanner scanner, University uni) {
         boolean inMenu = true;
         while (inMenu) {
-            System.out.println("\n--- Doctor Menu: Dr. " + getName() + " ---");
+            System.out.println("\n---------- Doctor Menu: Dr. " + getName() + " ----------");
             System.out.println("1. Add new course");
             System.out.println("2. Assign grade to student");
             System.out.println("3. View courses and grades");
@@ -132,7 +120,7 @@ public class Doctor extends Person {
     }
 
     private void addNewCourse(java.util.Scanner scanner, University uni) {
-        System.out.println("\n--- Add New Course ---");
+        System.out.println("\n---------- Add New Course ----------");
         System.out.print("Enter course name: ");
         String name = scanner.nextLine();
         System.out.print("Enter course code: ");
@@ -152,7 +140,7 @@ public class Doctor extends Person {
             return;
         }
 
-        System.out.println("\n--- Select Course ---");
+        System.out.println("\n---------- Select Course ----------");
         for (int i = 0; i < assignedCoursesCount; i++) {
             System.out.println((i + 1) + ". " + assignedCourses[i].getCourseName());
         }
@@ -164,7 +152,7 @@ public class Doctor extends Person {
         }
         Course selectedCourse = assignedCourses[courseIdx];
 
-        System.out.println("\n--- Students in " + selectedCourse.getCourseName() + " ---");
+        System.out.println("\n---------- Students in " + selectedCourse.getCourseName() + " ----------");
         Student[] enrolled = new Student[100];
         int count = 0;
         for (int i = 0; i < uni.getStudentCount(); i++) {

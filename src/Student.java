@@ -37,20 +37,29 @@ public class Student extends Person {
         return selectedCoursesCount;
     }
 
-    @Override
     public void displayInfo() {
-        System.out.println("--- Student Info ---");
+        System.out.println("------------- Student Info -------------");
         System.out.println("Name: " + getName());
         System.out.println("ID: " + getId());
         System.out.println("Major: " + major);
         System.out.println("Year: " + year);
-        System.out.println("Final GPA: " + calculateFinalGPA());
+        System.out.println("GPA: " + calculateFinalGPA());
+        System.out.println("Courses: ");
         viewCourses();
     }
 
     public void selectCourse(Course c) {
         if (selectedCoursesCount >= MAX_COURSES) {
-            System.out.println("Cannot add more courses!");
+            System.out.println("Cannot add more courses");
+            return;
+        }
+        if (c.getDoctor() == null) {
+            System.out.println("Course not assigned to a doctor");
+            return;
+        }
+
+        if (c.getGrade(this) != null) {
+            System.out.println("Cannot enroll in a course that you have already graded");
             return;
         }
         selectedCourses[selectedCoursesCount] = c;
@@ -59,13 +68,24 @@ public class Student extends Person {
     }
 
     public void viewCourses() {
-        System.out.println("Selected Courses:");
+        System.out.println("------------- Selected Courses -------------");
         for (int i = 0; i < selectedCoursesCount; i++) {
             Course c = selectedCourses[i];
             Double grade = c.getGrade(this);
-            String doc = c.getDoctor() != null ? "Dr. " + c.getDoctor().getName() : "Not Assigned";
-            String gr = grade != null ? "" + grade : "Not Graded";
-            System.out.println("- " + c.getCourseName() + " (Doctor: " + doc + ", Grade: " + gr + ")");
+            String doc;
+            if (c.getDoctor() != null) {
+                doc = "Dr. " + c.getDoctor().getName();
+            } else {
+                doc = "Not Assigned";
+            }
+
+            String gr;
+            if (grade != null) {
+                gr = String.valueOf(grade);
+            } else {
+                gr = "Not Graded";
+            }
+            System.out.println(c.getCourseName() + " (Doctor: " + doc + ", Grade: " + gr + ")");
         }
     }
 
@@ -79,16 +99,19 @@ public class Student extends Person {
                 totalCredits += selectedCourses[i].getCredits();
             }
         }
-        return totalCredits == 0 ? 0.0 : totalGrade / totalCredits;
+        if (totalCredits == 0) {
+            return 0.0;
+        }
+        return totalGrade / totalCredits;
     }
 
     public void showMenu(java.util.Scanner scanner, University uni) {
         boolean inMenu = true;
         while (inMenu) {
-            System.out.println("\n--- Student Menu: " + getName() + " ---");
+            System.out.println("\n------------- Student Menu: " + getName() + " -------------");
             System.out.println("1. Enroll in course");
             System.out.println("2. View courses and grades");
-            System.out.println("3. View Final GPA");
+            System.out.println("3. View GPA");
             System.out.println("4. Back to main menu");
             System.out.print("Choose: ");
 
@@ -98,30 +121,35 @@ public class Student extends Person {
             else if (choice == 2)
                 viewCourses();
             else if (choice == 3)
-                System.out.println("\nFinal GPA: " + calculateFinalGPA());
+                System.out.println("GPA: " + calculateFinalGPA());
             else if (choice == 4)
                 inMenu = false;
             else
-                System.out.println("Wrong choice!");
+                System.out.println("Wrong choice");
         }
     }
 
     private void enrollInCourse(java.util.Scanner scanner, University uni) {
-        System.out.println("\n--- Available Courses ---");
+        System.out.println("\n------------- Available Courses -------------");
         if (uni.getCourseCount() == 0) {
-            System.out.println("No courses available!");
+            System.out.println("No courses available");
             return;
         }
         for (int i = 0; i < uni.getCourseCount(); i++) {
             Course c = uni.getCourses()[i];
-            String doc = c.getDoctor() != null ? "Dr. " + c.getDoctor().getName() : "No Doctor";
+            String doc;
+            if (c.getDoctor() != null) {
+                doc = "Dr. " + c.getDoctor().getName();
+            } else {
+                doc = "No Doctor";
+            }
             System.out.println((i + 1) + ". " + c.getCourseName() + " - " + c.getCourseCode() + " (" + c.getCredits()
-                    + " cr) - " + doc);
+                    + " Credits) - " + doc);
         }
         System.out.print("Select course number: ");
         int idx = Integer.parseInt(scanner.nextLine()) - 1;
         if (idx < 0 || idx >= uni.getCourseCount()) {
-            System.out.println("Wrong number!");
+            System.out.println("Wrong number");
             return;
         }
         selectCourse(uni.getCourses()[idx]);

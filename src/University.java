@@ -9,7 +9,7 @@ public class University {
 
     public University() {
         students = new Student[MAX];
-        doctors = new Doctor[MAX];
+        doctors = new Doctor[10];
         courses = new Course[MAX];
         studentCount = doctorCount = courseCount = 0;
     }
@@ -60,7 +60,7 @@ public class University {
     }
 
     public void displayAllStudents() {
-        System.out.println("\n===== ALL STUDENTS =====");
+        System.out.println("\n========== ALL STUDENTS ==========\n");
         if (studentCount == 0)
             System.out.println("No students enrolled yet.");
         else
@@ -71,7 +71,7 @@ public class University {
     }
 
     public void displayAllDoctors() {
-        System.out.println("\n===== ALL DOCTORS =====");
+        System.out.println("\n========== ALL DOCTORS ==========");
         if (doctorCount == 0)
             System.out.println("No doctors registered yet.");
         else
@@ -82,7 +82,7 @@ public class University {
     }
 
     public void displayAllCourses() {
-        System.out.println("\n===== ALL COURSES =====");
+        System.out.println("\n========== ALL COURSES ==========");
         if (courseCount == 0)
             System.out.println("No courses added yet.");
         else
