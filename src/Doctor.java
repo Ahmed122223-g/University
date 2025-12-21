@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Doctor extends Person {
 
     private String department;
@@ -108,7 +110,7 @@ public class Doctor extends Person {
         }
     }
 
-    public void showMenu(java.util.Scanner scanner, University uni) {
+    public void showMenu(Scanner scanner, University uni) {
         boolean inMenu = true;
         while (inMenu) {
             System.out.println("\n---------- Doctor Menu: Dr. " + getName() + " ----------");
@@ -116,30 +118,26 @@ public class Doctor extends Person {
             System.out.println("2. Assign grade to student");
             System.out.println("3. View courses and grades");
             System.out.println("4. Back to main menu");
-            System.out.print("Choose: ");
-
-            int choice = Integer.parseInt(scanner.nextLine());
-            if (choice == 1)
+            // استخدمنا string علشان لو دخلت حروف يقبلها عادي والتطبيق ميبظش
+            String choice = HandelError(scanner, "Choose: ");
+            if (choice.equals("1"))
                 addNewCourse(scanner, uni);
-            else if (choice == 2)
+            else if (choice.equals("2"))
                 assignGrade(scanner, uni);
-            else if (choice == 3)
+            else if (choice.equals("3"))
                 displayInfo();
-            else if (choice == 4)
+            else if (choice.equals("4"))
                 inMenu = false;
             else
                 System.out.println("Wrong choice!");
         }
     }
 
-    private void addNewCourse(java.util.Scanner scanner, University uni) {
+    private void addNewCourse(Scanner scanner, University uni) {
         System.out.println("\n---------- Add New Course ----------");
-        System.out.print("Enter course name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter course code: ");
-        String code = scanner.nextLine();
-        System.out.print("Enter credits: ");
-        int credits = Integer.parseInt(scanner.nextLine());
+        String name = HandelError(scanner, "Enter course name: ");
+        String code = HandelError(scanner, "Enter course code: ");
+        int credits = Integer.parseInt(HandelError(scanner, "Enter credits: "));
 
         Course course = new Course(name, code, credits);
         uni.addCourse(course);
@@ -147,7 +145,7 @@ public class Doctor extends Person {
         System.out.println("Course added successfully!");
     }
 
-    private void assignGrade(java.util.Scanner scanner, University uni) {
+    private void assignGrade(Scanner scanner, University uni) {
         if (assignedCoursesCount == 0) {
             System.out.println("No courses! Add a course first.");
             return;
@@ -157,8 +155,7 @@ public class Doctor extends Person {
         for (int i = 0; i < assignedCoursesCount; i++) {
             System.out.println((i + 1) + ". " + assignedCourses[i].getCourseName());
         }
-        System.out.print("Select course number: ");
-        int courseIdx = Integer.parseInt(scanner.nextLine()) - 1;
+        int courseIdx = Integer.parseInt(HandelError(scanner, "Select course number: ")) - 1;
         if (courseIdx < 0 || courseIdx >= assignedCoursesCount) {
             System.out.println("Wrong number!");
             return;
@@ -184,15 +181,24 @@ public class Doctor extends Person {
             return;
         }
 
-        System.out.print("Select student number: ");
-        int studentIdx = Integer.parseInt(scanner.nextLine()) - 1;
+        int studentIdx = Integer.parseInt(HandelError(scanner, "Select student number: ")) - 1;
         if (studentIdx < 0 || studentIdx >= count) {
             System.out.println("Wrong number!");
             return;
         }
 
-        System.out.print("Enter grade (0 to 4): ");
-        double grade = Double.parseDouble(scanner.nextLine());
+        double grade = Double.parseDouble(HandelError(scanner, "Enter grade (0 to 4): "));
         addGrade(enrolled[studentIdx], selectedCourse, grade);
+    }
+    // 
+
+    // الدالة دي وظيفتها انها بتشوف لو المستخدم دخل كلام فاضي هترفضه وتجبره يدخل بيانات صح
+    private String HandelError(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) return input;
+            System.out.println("Error: Input cannot be empty!");
+        }
     }
 }

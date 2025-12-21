@@ -11,23 +11,24 @@ public class Main {
         while (running) {
             showMenu();
             System.out.print("Enter choice: ");
-            int choice = Integer.parseInt(scanner.nextLine());
+            //استخدمنا هنا string علشان لو دخلت حروف يقبلها عادي والتطبيق ميبظش
+            String choice = scanner.nextLine();
 
-            if (choice == 1)
+            if (choice.equals("1"))
                 registerDoctor();
-            else if (choice == 2)
+            else if (choice.equals("2"))
                 registerStudent();
-            else if (choice == 3)
+            else if (choice.equals("3"))
                 doctorMenu();
-            else if (choice == 4)
+            else if (choice.equals("4"))
                 studentMenu();
-            else if (choice == 5)
+            else if (choice.equals("5"))
                 uni.displayAllStudents();
-            else if (choice == 6)
+            else if (choice.equals("6"))
                 uni.displayAllDoctors();
-            else if (choice == 7)
+            else if (choice.equals("7"))
                 uni.displayAllCourses();
-            else if (choice == 8) {
+            else if (choice.equals("8")) {
                 System.out.println("\nGoodbye!");
                 running = false;
             } else
@@ -51,31 +52,21 @@ public class Main {
 
     static void registerDoctor() {
         System.out.println("\n--- Register Doctor ---");
-        System.out.print("Name: ");
-        String name = scanner.nextLine();
-        System.out.print("ID: ");
-        String id = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Department: ");
-        String dept = scanner.nextLine();
-        System.out.print("Title: ");
-        String title = scanner.nextLine();
+        String name = HandelError("Name: ");
+        String id = HandelError("ID: ");
+        String email = HandelError("Email: ");
+        String dept = HandelError("Department: ");
+        String title = HandelError("Title: ");
         uni.addDoctor(new Doctor(name, id, email, dept, title));
     }
 
     static void registerStudent() {
         System.out.println("\n--- Register Student ---");
-        System.out.print("Name: ");
-        String name = scanner.nextLine();
-        System.out.print("ID: ");
-        String id = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Major: ");
-        String major = scanner.nextLine();
-        System.out.print("Year: ");
-        int year = Integer.parseInt(scanner.nextLine());
+        String name = HandelError("Name: ");
+        String id = HandelError("ID: ");
+        String email = HandelError("Email: ");
+        String major = HandelError("Major: ");
+        int year = Integer.parseInt(HandelError("Year: "));
         uni.addStudent(new Student(name, id, email, major, year));
     }
 
@@ -87,10 +78,16 @@ public class Main {
         System.out.println("\n--- Select Doctor ---");
         for (int i = 0; i < uni.getDoctorCount(); i++)
             System.out.println((i + 1) + ". Dr. " + uni.getDoctors()[i].getName());
-        System.out.print("Select: ");
-        int idx = Integer.parseInt(scanner.nextLine()) - 1;
-        if (idx >= 0 && idx < uni.getDoctorCount())
-            uni.getDoctors()[idx].showMenu(scanner, uni);
+        //استخدمنا String بدل int علشان لو دخل حروف ميبظش
+        String choice = HandelError("Select: ");
+        //نقارن الاختيار بالارقام
+        for (int i = 0; i < uni.getDoctorCount(); i++) {
+            if (choice.equals(String.valueOf(i + 1))) {
+                uni.getDoctors()[i].showMenu(scanner, uni);
+                return;
+            }
+        }
+        System.out.println("Wrong choice!");
     }
 
     static void studentMenu() {
@@ -101,9 +98,25 @@ public class Main {
         System.out.println("\n--- Select Student ---");
         for (int i = 0; i < uni.getStudentCount(); i++)
             System.out.println((i + 1) + ". " + uni.getStudents()[i].getName());
-        System.out.print("Select: ");
-        int idx = Integer.parseInt(scanner.nextLine()) - 1;
-        if (idx >= 0 && idx < uni.getStudentCount())
-            uni.getStudents()[idx].showMenu(scanner, uni);
+        //استخدمنا String بدل int علشان لو دخل حروف ميبظش
+        String choice = HandelError("Select: ");
+        //نقارن الاختيار بالارقام
+        for (int i = 0; i < uni.getStudentCount(); i++) {
+            if (choice.equals(String.valueOf(i + 1))) {
+                uni.getStudents()[i].showMenu(scanner, uni);
+                return;
+            }
+        }
+        System.out.println("Wrong choice!");
+    }
+
+    // الداله دي وظيفتها انها بتشوف لو المستخدم دخل كلام فاضي هترفضه وتجبره يدخل بيانات صح
+    static String HandelError(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) return input;
+            System.out.println("Error: Input cannot be empty!");
+        }
     }
 }

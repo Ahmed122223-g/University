@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Student extends Person {
     private String major;
     private int year;
@@ -105,7 +107,7 @@ public class Student extends Person {
         return totalGrade / totalCredits;
     }
 
-    public void showMenu(java.util.Scanner scanner, University uni) {
+    public void showMenu(Scanner scanner, University uni) {
         boolean inMenu = true;
         while (inMenu) {
             System.out.println("\n------------- Student Menu: " + getName() + " -------------");
@@ -113,23 +115,22 @@ public class Student extends Person {
             System.out.println("2. View courses and grades");
             System.out.println("3. View GPA");
             System.out.println("4. Back to main menu");
-            System.out.print("Choose: ");
-
-            int choice = Integer.parseInt(scanner.nextLine());
-            if (choice == 1)
+            // استخدمنا string علشان لو دخلت حروف يقبلها عادي والتطبيق ميبظش
+            String choice = HandelError(scanner, "Choose: ");
+            if (choice.equals("1"))
                 enrollInCourse(scanner, uni);
-            else if (choice == 2)
+            else if (choice.equals("2"))
                 viewCourses();
-            else if (choice == 3)
+            else if (choice.equals("3"))
                 System.out.println("GPA: " + calculateFinalGPA());
-            else if (choice == 4)
+            else if (choice.equals("4"))
                 inMenu = false;
             else
                 System.out.println("Wrong choice");
         }
     }
 
-    private void enrollInCourse(java.util.Scanner scanner, University uni) {
+    private void enrollInCourse(Scanner scanner, University uni) {
         System.out.println("\n------------- Available Courses -------------");
         if (uni.getCourseCount() == 0) {
             System.out.println("No courses available");
@@ -146,12 +147,22 @@ public class Student extends Person {
             System.out.println((i + 1) + ". " + c.getCourseName() + " - " + c.getCourseCode() + " (" + c.getCredits()
                     + " Credits) - " + doc);
         }
-        System.out.print("Select course number: ");
-        int idx = Integer.parseInt(scanner.nextLine()) - 1;
+        int idx = Integer.parseInt(HandelError(scanner, "Select course number: ")) - 1;
         if (idx < 0 || idx >= uni.getCourseCount()) {
             System.out.println("Wrong number");
             return;
         }
         selectCourse(uni.getCourses()[idx]);
+    }
+    // 
+
+    // نفس الداله في main
+    private String HandelError(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) return input;
+            System.out.println("Error: Input cannot be empty!");
+        }
     }
 }
