@@ -9,7 +9,15 @@ public class Main {
 
         boolean running = true;
         while (running) {
-            showMenu();
+            System.out.println("\n----- Main Menu -----");
+            System.out.println("1. Register Doctor");
+            System.out.println("2. Register Student");
+            System.out.println("3. Doctor Login");
+            System.out.println("4. Student Login");
+            System.out.println("5. Show Students");
+            System.out.println("6. Show Doctors");
+            System.out.println("7. Show Courses");
+            System.out.println("8. Exit");
             System.out.print("Enter choice: ");
             // استخدمنا هنا string علشان لو دخلت حروف يقبلها عادي والتطبيق ميبظش
             String choice = scanner.nextLine();
@@ -36,18 +44,6 @@ public class Main {
             System.out.println();
         }
         scanner.close();
-    }
-
-    static void showMenu() {
-        System.out.println("\n----- Main Menu -----");
-        System.out.println("1. Register Doctor");
-        System.out.println("2. Register Student");
-        System.out.println("3. Doctor Login");
-        System.out.println("4. Student Login");
-        System.out.println("5. Show Students");
-        System.out.println("6. Show Doctors");
-        System.out.println("7. Show Courses");
-        System.out.println("8. Exit");
     }
 
     static void registerDoctor() {
@@ -83,7 +79,7 @@ public class Main {
         // نقارن الاختيار بالارقام
         for (int i = 0; i < uni.getDoctorCount(); i++) {
             if (choice.equals(String.valueOf(i + 1))) {
-                uni.getDoctors().get(i).showMenu(scanner, uni);
+                uni.getDoctors().get(i).Menu(scanner, uni);
                 return;
             }
         }
@@ -103,7 +99,7 @@ public class Main {
         // نقارن الاختيار بالارقام
         for (int i = 0; i < uni.getStudentCount(); i++) {
             if (choice.equals(String.valueOf(i + 1))) {
-                uni.getStudents().get(i).showMenu(scanner, uni);
+                uni.getStudents().get(i).Menu(scanner, uni);
                 return;
             }
         }

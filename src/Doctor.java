@@ -102,7 +102,7 @@ public class Doctor extends Person {
         }
     }
 
-    public void showMenu(Scanner scanner, University uni) {
+    public void Menu(Scanner scanner, University uni) {
         boolean inMenu = true;
         while (inMenu) {
             System.out.println("\n---------- Doctor Menu: Dr. " + getName() + " ----------");
@@ -113,7 +113,7 @@ public class Doctor extends Person {
             // استخدمنا string علشان لو دخلت حروف يقبلها عادي والتطبيق ميبظش
             String choice = HandelError(scanner, "Choose: ");
             if (choice.equals("1"))
-                addNewCourse(scanner, uni);
+                addCourse(scanner, uni);
             else if (choice.equals("2"))
                 assignGrade(scanner, uni);
             else if (choice.equals("3"))
@@ -125,7 +125,7 @@ public class Doctor extends Person {
         }
     }
 
-    private void addNewCourse(Scanner scanner, University uni) {
+    private void addCourse(Scanner scanner, University uni) {
         System.out.println("\n---------- Add New Course ----------");
         String name = HandelError(scanner, "Enter course name: ");
         String code = HandelError(scanner, "Enter course code: ");

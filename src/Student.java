@@ -43,17 +43,12 @@ public class Student extends Person {
         System.out.println("ID: " + getId());
         System.out.println("Major: " + major);
         System.out.println("Year: " + year);
-        System.out.println("GPA: " + calculateFinalGPA());
+        System.out.println("GPA: " + calculateGPA());
         System.out.println("Courses: ");
         viewCourses();
     }
 
     public void selectCourse(Course c) {
-        if (c.getDoctor() == null) {
-            System.out.println("Course not assigned to a doctor");
-            return;
-        }
-
         if (c.getGrade(this) != null) {
             System.out.println("Cannot enroll in a course that you have already graded");
             return;
@@ -84,7 +79,7 @@ public class Student extends Person {
         }
     }
 
-    public double calculateFinalGPA() {
+    public double calculateGPA() {
         double totalGrade = 0;
         int totalCredits = 0;
         double gpa;
@@ -96,13 +91,13 @@ public class Student extends Person {
             }
         }
         if (totalCredits == 0) {
-            return 0.0;
+            return 0;
         }
         gpa = totalGrade / totalCredits;
         return gpa;
     }
 
-    public void showMenu(Scanner scanner, University uni) {
+    public void Menu(Scanner scanner, University uni) {
         boolean inMenu = true;
         while (inMenu) {
             System.out.println("\n------------- Student Menu: " + getName() + " -------------");
@@ -117,7 +112,7 @@ public class Student extends Person {
             else if (choice.equals("2"))
                 viewCourses();
             else if (choice.equals("3"))
-                System.out.println("GPA: " + calculateFinalGPA());
+                System.out.println("GPA: " + calculateGPA());
             else if (choice.equals("4"))
                 inMenu = false;
             else
