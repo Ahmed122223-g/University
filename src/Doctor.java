@@ -1,19 +1,17 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Doctor extends Person {
 
     private String department;
     private String title;
-    private Course[] assignedCourses;
-    private int assignedCoursesCount;
-    private static final int MAX_COURSES = 10;
+    private ArrayList<Course> assignedCourses;
 
     public Doctor(String name, String id, String email, String department, String title) {
         super(name, id, email);
         this.department = department;
         this.title = title;
-        this.assignedCourses = new Course[MAX_COURSES];
-        this.assignedCoursesCount = 0;
+        this.assignedCourses = new ArrayList<Course>();
     }
 
     public String getDepartment() {
@@ -32,12 +30,12 @@ public class Doctor extends Person {
         this.title = title;
     }
 
-    public Course[] getAssignedCourses() {
+    public ArrayList<Course> getAssignedCourses() {
         return assignedCourses;
     }
 
     public int getAssignedCoursesCount() {
-        return assignedCoursesCount;
+        return assignedCourses.size();
     }
 
     public void displayInfo() {
@@ -53,20 +51,15 @@ public class Doctor extends Person {
     }
 
     public void assignCourse(Course c) {
-        if (assignedCoursesCount < MAX_COURSES) {
-            assignedCourses[assignedCoursesCount] = c;
-            assignedCoursesCount++;
-            c.assignDoctor(this);
-            System.out.println("Dr. " + getName() + " assigned to " + c.getCourseName());
-        } else {
-            System.out.println("Cannot assign more courses.");
-        }
+        assignedCourses.add(c);
+        c.assignDoctor(this);
+        System.out.println("Dr. " + getName() + " assigned to " + c.getCourseName());
     }
 
     public void addGrade(Student s, Course c, double grade) {
         boolean teachesCourse = false;
-        for (int i = 0; i < assignedCoursesCount; i++) {
-            if (assignedCourses[i] == c) {
+        for (int i = 0; i < assignedCourses.size(); i++) {
+            if (assignedCourses.get(i) == c) {
                 teachesCourse = true;
                 break;
             }
@@ -78,7 +71,7 @@ public class Doctor extends Person {
 
         boolean studentEnrolled = false;
         for (int i = 0; i < s.getSelectedCoursesCount(); i++) {
-            if (s.getSelectedCourses()[i] == c) {
+            if (s.getSelectedCourses().get(i) == c) {
                 studentEnrolled = true;
                 break;
             }
@@ -94,18 +87,17 @@ public class Doctor extends Person {
 
     public void viewCourses() {
         System.out.println("Courses Teaching:");
-        for (int i = 0; i < assignedCoursesCount; i++) {
-            System.out.println("- " + assignedCourses[i].getCourseName());
+        for (int i = 0; i < assignedCourses.size(); i++) {
+            System.out.println("- " + assignedCourses.get(i).getCourseName());
         }
     }
 
     public void showGrades() {
         System.out.println("Grades Assigned:");
-        for (int i = 0; i < assignedCoursesCount; i++) {
-            Course c = assignedCourses[i];
+        for (int i = 0; i < assignedCourses.size(); i++) {
+            Course c = assignedCourses.get(i);
             for (int j = 0; j < c.getGradesCount(); j++) {
-                System.out.println("- " + c.getGradedStudents()[j].getName() + ": " + c.getGradesList()[j] + " in "
-                        + c.getCourseName());
+                System.out.println("- " + c.getGradedStudents().get(j).getName() + ": " + c.getGradesList().get(j) + " in " + c.getCourseName());
             }
         }
     }
@@ -146,53 +138,63 @@ public class Doctor extends Person {
     }
 
     private void assignGrade(Scanner scanner, University uni) {
-        if (assignedCoursesCount == 0) {
+        if (assignedCourses.size() == 0) {
             System.out.println("No courses! Add a course first.");
             return;
         }
 
         System.out.println("\n---------- Select Course ----------");
-        for (int i = 0; i < assignedCoursesCount; i++) {
-            System.out.println((i + 1) + ". " + assignedCourses[i].getCourseName());
+        for (int i = 0; i < assignedCourses.size(); i++) {
+            System.out.println((i + 1) + ". " + assignedCourses.get(i).getCourseName());
         }
-        int courseIdx = Integer.parseInt(HandelError(scanner, "Select course number: ")) - 1;
-        if (courseIdx < 0 || courseIdx >= assignedCoursesCount) {
+        // استخدمنا String علشان لو دخل حروف ميبظش
+        String courseChoice = HandelError(scanner, "Select course number: ");
+        Course selectedCourse = null;
+        for (int i = 0; i < assignedCourses.size(); i++) {
+            if (courseChoice.equals(String.valueOf(i + 1))) {
+                selectedCourse = assignedCourses.get(i);
+                break;
+            }
+        }
+        if (selectedCourse == null) {
             System.out.println("Wrong number!");
             return;
         }
-        Course selectedCourse = assignedCourses[courseIdx];
 
         System.out.println("\n---------- Students in " + selectedCourse.getCourseName() + " ----------");
-        Student[] enrolled = new Student[100];
-        int count = 0;
+        ArrayList<Student> enrolled = new ArrayList<Student>();
         for (int i = 0; i < uni.getStudentCount(); i++) {
-            Student s = uni.getStudents()[i];
+            Student s = uni.getStudents().get(i);
             for (int j = 0; j < s.getSelectedCoursesCount(); j++) {
-                if (s.getSelectedCourses()[j] == selectedCourse) {
-                    enrolled[count] = s;
-                    System.out.println((count + 1) + ". " + s.getName());
-                    count++;
+                if (s.getSelectedCourses().get(j) == selectedCourse) {
+                    enrolled.add(s);
+                    System.out.println(enrolled.size() + ". " + s.getName());
                     break;
                 }
             }
         }
-        if (count == 0) {
+        if (enrolled.size() == 0) {
             System.out.println("No students enrolled!");
             return;
         }
 
-        int studentIdx = Integer.parseInt(HandelError(scanner, "Select student number: ")) - 1;
-        if (studentIdx < 0 || studentIdx >= count) {
+        String studentChoice = HandelError(scanner, "Select student number: ");
+        Student selectedStudent = null;
+        for (int i = 0; i < enrolled.size(); i++) {
+            if (studentChoice.equals(String.valueOf(i + 1))) {
+                selectedStudent = enrolled.get(i);
+                break;
+            }
+        }
+        if (selectedStudent == null) {
             System.out.println("Wrong number!");
             return;
         }
 
         double grade = Double.parseDouble(HandelError(scanner, "Enter grade (0 to 4): "));
-        addGrade(enrolled[studentIdx], selectedCourse, grade);
+        addGrade(selectedStudent, selectedCourse, grade);
     }
-    // 
-
-    // الدالة دي وظيفتها انها بتشوف لو المستخدم دخل كلام فاضي هترفضه وتجبره يدخل بيانات صح
+    // الداله دي وظيفتها انها بتشوف لو المستخدم دخل كلام فاضي هترفضه وتجبره يدخل بيانات صح
     private String HandelError(Scanner scanner, String prompt) {
         while (true) {
             System.out.print(prompt);

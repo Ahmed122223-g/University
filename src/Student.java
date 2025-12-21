@@ -1,18 +1,16 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Student extends Person {
     private String major;
     private int year;
-    private Course[] selectedCourses;
-    private int selectedCoursesCount;
-    public static final int MAX_COURSES = 7;
+    private ArrayList<Course> selectedCourses;
 
     public Student(String name, String id, String email, String major, int year) {
         super(name, id, email);
         this.major = major;
         this.year = year;
-        this.selectedCourses = new Course[MAX_COURSES];
-        this.selectedCoursesCount = 0;
+        this.selectedCourses = new ArrayList<Course>();
     }
 
     public String getMajor() {
@@ -31,12 +29,12 @@ public class Student extends Person {
         this.year = year;
     }
 
-    public Course[] getSelectedCourses() {
+    public ArrayList<Course> getSelectedCourses() {
         return selectedCourses;
     }
 
     public int getSelectedCoursesCount() {
-        return selectedCoursesCount;
+        return selectedCourses.size();
     }
 
     public void displayInfo() {
@@ -51,10 +49,6 @@ public class Student extends Person {
     }
 
     public void selectCourse(Course c) {
-        if (selectedCoursesCount >= MAX_COURSES) {
-            System.out.println("Cannot add more courses");
-            return;
-        }
         if (c.getDoctor() == null) {
             System.out.println("Course not assigned to a doctor");
             return;
@@ -64,15 +58,14 @@ public class Student extends Person {
             System.out.println("Cannot enroll in a course that you have already graded");
             return;
         }
-        selectedCourses[selectedCoursesCount] = c;
-        selectedCoursesCount++;
+        selectedCourses.add(c);
         System.out.println(getName() + " enrolled in " + c.getCourseName());
     }
 
     public void viewCourses() {
         System.out.println("------------- Selected Courses -------------");
-        for (int i = 0; i < selectedCoursesCount; i++) {
-            Course c = selectedCourses[i];
+        for (int i = 0; i < selectedCourses.size(); i++) {
+            Course c = selectedCourses.get(i);
             Double grade = c.getGrade(this);
             String doc;
             if (c.getDoctor() != null) {
@@ -94,17 +87,19 @@ public class Student extends Person {
     public double calculateFinalGPA() {
         double totalGrade = 0;
         int totalCredits = 0;
-        for (int i = 0; i < selectedCoursesCount; i++) {
-            Double grade = selectedCourses[i].getGrade(this);
+        double gpa;
+        for (int i = 0; i < selectedCourses.size(); i++) {
+            Double grade = selectedCourses.get(i).getGrade(this);
             if (grade != null) {
-                totalGrade += grade * selectedCourses[i].getCredits();
-                totalCredits += selectedCourses[i].getCredits();
+                totalGrade += grade * selectedCourses.get(i).getCredits();
+                totalCredits += selectedCourses.get(i).getCredits();
             }
         }
         if (totalCredits == 0) {
             return 0.0;
         }
-        return totalGrade / totalCredits;
+        gpa = totalGrade / totalCredits;
+        return gpa;
     }
 
     public void showMenu(Scanner scanner, University uni) {
@@ -137,7 +132,7 @@ public class Student extends Person {
             return;
         }
         for (int i = 0; i < uni.getCourseCount(); i++) {
-            Course c = uni.getCourses()[i];
+            Course c = uni.getCourses().get(i);
             String doc;
             if (c.getDoctor() != null) {
                 doc = "Dr. " + c.getDoctor().getName();
@@ -147,22 +142,25 @@ public class Student extends Person {
             System.out.println((i + 1) + ". " + c.getCourseName() + " - " + c.getCourseCode() + " (" + c.getCredits()
                     + " Credits) - " + doc);
         }
-        int idx = Integer.parseInt(HandelError(scanner, "Select course number: ")) - 1;
-        if (idx < 0 || idx >= uni.getCourseCount()) {
-            System.out.println("Wrong number");
-            return;
+        // استخدمنا String علشان لو دخل حروف ميبظش
+        String choice = HandelError(scanner, "Select course number: ");
+        for (int i = 0; i < uni.getCourseCount(); i++) {
+            if (choice.equals(String.valueOf(i + 1))) {
+                selectCourse(uni.getCourses().get(i));
+                return;
+            }
         }
-        selectCourse(uni.getCourses()[idx]);
+        System.out.println("Wrong number");
     }
-    // 
 
-    // نفس الداله في main
+    // الداله دي وظيفتها انها بتشوف لو المستخدم دخل كلام فاضي هترفضه وتجبره يدخل بيانات صح
     private String HandelError(Scanner scanner, String prompt) {
         while (true) {
-            System.out.print(prompt);
+           System.out.print(prompt);
             String input = scanner.nextLine().trim();
             if (!input.isEmpty()) return input;
             System.out.println("Error: Input cannot be empty!");
         }
     }
 }
+                

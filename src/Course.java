@@ -1,23 +1,22 @@
+import java.util.ArrayList;
+
 public class Course {
     private String courseName;
     private String courseCode;
     private int credits;
     private Doctor doctor;
-    private Student[] gradedStudents;
-    private double[] gradesList;
-    private int gradesCount;
+    private ArrayList<Student> gradedStudents;
+    private ArrayList<Double> gradesList;
 
     public static final double MAX_GRADE = 4.0;
-    private static final int MAX_STUDENTS = 50;
 
     public Course(String courseName, String courseCode, int credits) {
         this.courseName = courseName;
         this.courseCode = courseCode;
         this.credits = credits;
         this.doctor = null;
-        this.gradedStudents = new Student[MAX_STUDENTS];
-        this.gradesList = new double[MAX_STUDENTS];
-        this.gradesCount = 0;
+        this.gradedStudents = new ArrayList<Student>();
+        this.gradesList = new ArrayList<Double>();
     }
 
     public String getCourseName() {
@@ -36,16 +35,16 @@ public class Course {
         return doctor;
     }
 
-    public Student[] getGradedStudents() {
+    public ArrayList<Student> getGradedStudents() {
         return gradedStudents;
     }
 
-    public double[] getGradesList() {
+    public ArrayList<Double> getGradesList() {
         return gradesList;
     }
 
     public int getGradesCount() {
-        return gradesCount;
+        return gradedStudents.size();
     }
 
     public void assignDoctor(Doctor d) {
@@ -64,23 +63,22 @@ public class Course {
     }
 
     public void setGrade(Student s, double grade) {
-        for (int i = 0; i < gradesCount; i++) {
-            if (gradedStudents[i] == s) {
-                gradesList[i] = grade;
+        // لو الطالب موجود نحدث درجته
+        for (int i = 0; i < gradedStudents.size(); i++) {
+            if (gradedStudents.get(i) == s) {
+                gradesList.set(i, grade);
                 return;
             }
         }
-        if (gradesCount < MAX_STUDENTS) {
-            gradedStudents[gradesCount] = s;
-            gradesList[gradesCount] = grade;
-            gradesCount++;
-        }
+        // لو مش موجود نضيفه
+        gradedStudents.add(s);
+        gradesList.add(grade);
     }
 
     public Double getGrade(Student s) {
-        for (int i = 0; i < gradesCount; i++) {
-            if (gradedStudents[i] == s)
-                return gradesList[i];
+        for (int i = 0; i < gradedStudents.size(); i++) {
+            if (gradedStudents.get(i) == s)
+                return gradesList.get(i);
         }
         return null;
     }

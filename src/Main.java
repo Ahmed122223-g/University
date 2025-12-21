@@ -11,7 +11,7 @@ public class Main {
         while (running) {
             showMenu();
             System.out.print("Enter choice: ");
-            //استخدمنا هنا string علشان لو دخلت حروف يقبلها عادي والتطبيق ميبظش
+            // استخدمنا هنا string علشان لو دخلت حروف يقبلها عادي والتطبيق ميبظش
             String choice = scanner.nextLine();
 
             if (choice.equals("1"))
@@ -77,13 +77,13 @@ public class Main {
         }
         System.out.println("\n--- Select Doctor ---");
         for (int i = 0; i < uni.getDoctorCount(); i++)
-            System.out.println((i + 1) + ". Dr. " + uni.getDoctors()[i].getName());
-        //استخدمنا String بدل int علشان لو دخل حروف ميبظش
+            System.out.println((i + 1) + ". Dr. " + uni.getDoctors().get(i).getName());
+        // استخدمنا String بدل int علشان لو دخل حروف ميبظش
         String choice = HandelError("Select: ");
-        //نقارن الاختيار بالارقام
+        // نقارن الاختيار بالارقام
         for (int i = 0; i < uni.getDoctorCount(); i++) {
             if (choice.equals(String.valueOf(i + 1))) {
-                uni.getDoctors()[i].showMenu(scanner, uni);
+                uni.getDoctors().get(i).showMenu(scanner, uni);
                 return;
             }
         }
@@ -97,25 +97,26 @@ public class Main {
         }
         System.out.println("\n--- Select Student ---");
         for (int i = 0; i < uni.getStudentCount(); i++)
-            System.out.println((i + 1) + ". " + uni.getStudents()[i].getName());
-        //استخدمنا String بدل int علشان لو دخل حروف ميبظش
+            System.out.println((i + 1) + ". " + uni.getStudents().get(i).getName());
+        // استخدمنا String بدل int علشان لو دخل حروف ميبظش
         String choice = HandelError("Select: ");
-        //نقارن الاختيار بالارقام
+        // نقارن الاختيار بالارقام
         for (int i = 0; i < uni.getStudentCount(); i++) {
             if (choice.equals(String.valueOf(i + 1))) {
-                uni.getStudents()[i].showMenu(scanner, uni);
+                uni.getStudents().get(i).showMenu(scanner, uni);
                 return;
             }
         }
         System.out.println("Wrong choice!");
     }
 
-    // الداله دي وظيفتها انها بتشوف لو المستخدم دخل كلام فاضي هترفضه وتجبره يدخل بيانات صح
+    // الداله دي وظيفتها في الحياه انها بتشوف لو المستخدم دخل كلام فاضي هترفضه وتجبره يدخل
     static String HandelError(String prompt) {
         while (true) {
             System.out.print(prompt);
             String input = scanner.nextLine().trim();
-            if (!input.isEmpty()) return input;
+            if (!input.isEmpty())
+                return input;
             System.out.println("Error: Input cannot be empty!");
         }
     }
