@@ -59,7 +59,9 @@ public class Main {
         String email = scanner.nextLine();
         System.out.print("Department: ");
         String dept = scanner.nextLine();
-        uni.addDoctor(new Doctor(name, id, email, dept));
+        System.out.print("Title: ");
+        String title = scanner.nextLine();
+        uni.addDoctor(new Doctor(name, id, email, dept, title));
     }
 
     static void registerStudent() {

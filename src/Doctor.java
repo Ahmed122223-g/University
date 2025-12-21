@@ -1,13 +1,15 @@
 public class Doctor extends Person {
 
     private String department;
+    private String title;
     private Course[] assignedCourses;
     private int assignedCoursesCount;
     private static final int MAX_COURSES = 10;
 
-    public Doctor(String name, String id, String email, String department) {
+    public Doctor(String name, String id, String email, String department, String title) {
         super(name, id, email);
         this.department = department;
+        this.title = title;
         this.assignedCourses = new Course[MAX_COURSES];
         this.assignedCoursesCount = 0;
     }
@@ -18,6 +20,14 @@ public class Doctor extends Person {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Course[] getAssignedCourses() {
@@ -33,8 +43,11 @@ public class Doctor extends Person {
         System.out.println("Name: Dr. " + getName());
         System.out.println("ID: " + getId());
         System.out.println("Department: " + department);
-        System.out.println("Courses: "); viewCourses();
-        System.out.println("Grades: "); showGrades();
+        System.out.println("Title: " + title);
+        System.out.println("Courses: ");
+        viewCourses();
+        System.out.println("Grades: ");
+        showGrades();
     }
 
     public void assignCourse(Course c) {
